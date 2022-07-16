@@ -22,36 +22,22 @@ class Case(models.Model):
 
 
 class Moderator(models.Model):
-    class ModeratorObjects(models.Manager):
-        def get_queryset(self, caseId):
-            return super().get_queryset().filter(self.case.Id == caseId)
-
-    case = models.ForeignKey(Case, on_delete=models.CASCADE)
+    case = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name='caseModerators')
     userId = models.BigIntegerField(null=False)
-    objects = models.Manager()
-    moderatorobjects = ModeratorObjects()
 
 
 class Ban(models.Model):
-    class BanObjects(models.Manager):
-        def get_queryset(self, caseId):
-            return super().get_queryset().filter(self.case.Id == caseId)
-
-    case = models.ForeignKey(Case, on_delete=models.CASCADE)
+    case = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name='caseBans')
     userId = models.BigIntegerField(null=False)
-    moderatorUserId = models.BigIntegerField(null=False)
+    moderator = models.ForeignKey(
+        Moderator, on_delete=models.CASCADE, related_name='moderatorbans')
     banDate = models.DateTimeField(default=timezone.now, null=False)
-    objects = models.Manager()
-    banobjects = BanObjects()
 
 
 class Vote(models.Model):
-    class VoteObjects(models.Manager):
-        def get_queryset(self, caseId):
-            return super().get_queryset().filter(self.case.Id == caseId)
-
-    case = models.ForeignKey(Case, on_delete=models.CASCADE)
+    case = models.ForeignKey(
+        Case, on_delete=models.CASCADE, related_name='caseVotes')
     userId = models.BigIntegerField(null=False)
     upvote = models.BooleanField(null=False, default=False)
-    objects = models.Manager()
-    voteobjects = VoteObjects()
